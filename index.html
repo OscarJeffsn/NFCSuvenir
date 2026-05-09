@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Карета Екатерины II — НМРТ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Cormorant+SC:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --marsala:#6B1A31;
+    --marsala-deep:#3E0A1C;
+    --gold:#D9B370;
+    --gold-bright:#EFC98B;
+    --gold-deep:#A8823D;
+    --cream:#F4E9D4;
+    --ink:#2A0812;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{
+    height:100%;
+    overflow:hidden;
+    background:#0e0408;
+    font-family:"Cormorant Garamond", Georgia, serif;
+    color:var(--cream);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .stage{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:
+      radial-gradient(ellipse at 20% 20%, #2b0b18 0%, #120408 60%, #060103 100%);
+  }
+
+  .phone{
+    position:relative;
+    width:min(420px, 100vw - 20px);
+    height:min(860px, 100vh - 20px);
+    aspect-ratio:420/860;
+    overflow:hidden;
+    border-radius:52px;
+    background:var(--marsala);
+    box-shadow:
+      0 2px 0 1px rgba(255,255,255,0.04) inset,
+      0 0 0 2px #111,
+      0 0 0 12px #1e1e1e,
+      0 40px 80px rgba(0,0,0,0.6),
+      0 80px 160px rgba(0,0,0,0.5);
+  }
+
+  .island{
+    position:absolute;
+    top:12px;
+    left:50%;
+    transform:translateX(-50%);
+    width:120px;
+    height:34px;
+    border-radius:22px;
+    background:#000;
+    z-index:90;
+  }
+
+  .canvas{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    padding:50px 22px 24px;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(140,41,69,0.55) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(30,5,12,0.7) 0%, transparent 60%),
+      linear-gradient(180deg, #6B1A31 0%, #551026 55%, #3E0A1C 100%);
+  }
+
+  .bg-orn{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    opacity:0.36;
+    filter:blur(3px);
+  }
+
+  .bg-orn svg{position:absolute;display:block}
+  .bg-orn .top{top:-60px;left:-80px;width:360px;height:360px;opacity:0.55}
+  .bg-orn .bot{bottom:-80px;right:-90px;width:380px;height:380px;opacity:0.45}
+  .bg-orn .mid{top:48%;left:50%;transform:translate(-50%,-50%);width:520px;height:520px;opacity:0.3}
+
+  .vignette{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0,0,0,0.5) 100%);
+  }
+
+  .flourish{
+    position:relative;
+    z-index:3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    color:var(--gold);
+  }
+
+  .flourish .line{
+    flex:none;
+    width:50px;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold) 60%, transparent);
+  }
+
+  .flourish .diamond{
+    width:5px;
+    height:5px;
+    background:var(--gold);
+    transform:rotate(45deg);
+  }
+
+  .flourish .diamond.small{
+    width:3px;
+    height:3px;
+    opacity:0.6;
+  }
+
+  .title-wrap{
+    position:relative;
+    z-index:3;
+    margin-top:8px;
+    text-align:center;
+  }
+
+  .title{
+    font-family:"Playfair Display", serif;
+    font-size:44px;
+    font-weight:500;
+    line-height:1;
+    letter-spacing:0.005em;
+    color:#fbf6eb;
+    text-shadow:0 2px 20px rgba(0,0,0,0.4);
+  }
+
+  .title .line1{
+    display:block;
+    font-size:28px;
+    font-weight:400;
+    letter-spacing:0.04em;
+    color:#f6e6c4;
+  }
+
+  .title .line2{
+    display:block;
+    margin-top:-2px;
+    font-weight:600;
+  }
+
+  .title .numeral{
+    margin-left:8px;
+    font-size:38px;
+    font-weight:400;
+    color:var(--gold-bright);
+  }
+
+  .subtitle{
+    max-width:300px;
+    margin:12px auto 0;
+    font-size:13px;
+    line-height:1.45;
+    letter-spacing:0.03em;
+    color:rgba(244,233,212,0.78);
+  }
+
+  .gallery{
+    position:relative;
+    z-index:3;
+    flex:1;
+    min-height:0;
+    margin:14px 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  .nav-arrow{
+    flex:none;
+    width:34px;
+    height:34px;
+    border:1px solid rgba(217,179,112,0.45);
+    border-radius:50%;
+    background:rgba(0,0,0,0.28);
+    color:var(--gold-bright);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:background .2s ease, transform .15s ease, border-color .2s ease;
+  }
+
+  .nav-arrow:hover{background:rgba(217,179,112,0.15);border-color:var(--gold-bright)}
+  .nav-arrow:active{transform:scale(0.94)}
+  .nav-arrow svg{width:12px;height:12px}
+
+  .frame{
+    position:relative;
+    flex:1;
+    max-width:280px;
+    max-height:100%;
+    aspect-ratio:3/4;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .frame::before{
+    content:"";
+    position:absolute;
+    inset:-4%;
+    border-radius:4px;
+    pointer-events:none;
+    box-shadow:0 0 0 0 rgba(239,201,139,0);
+    animation:nfcWarm 2.6s 0.4s ease-out 2;
+  }
+
+  @keyframes nfcWarm{
+    0%{box-shadow:0 0 0 0 rgba(239,201,139,0), inset 0 0 0 0 rgba(239,201,139,0)}
+    30%{box-shadow:0 0 40px 6px rgba(239,201,139,0.55), inset 0 0 30px rgba(239,201,139,0.35)}
+    100%{box-shadow:0 0 0 0 rgba(239,201,139,0), inset 0 0 0 0 rgba(239,201,139,0)}
+  }
+
+  .frame-svg{
+    position:absolute;
+    inset:-8%;
+    width:116%;
+    height:116%;
+    pointer-events:none;
+  }
+
+  .frame-inner{
+    position:absolute;
+    inset:9%;
+    overflow:hidden;
+    background:
+      repeating-linear-gradient(135deg, rgba(217,179,112,0.07) 0 2px, transparent 2px 10px),
+      linear-gradient(180deg, #2e0913 0%, #1a0509 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(217,179,112,0.45),
+      inset 0 0 0 3px rgba(30,6,13,0.9),
+      inset 0 0 0 4px rgba(217,179,112,0.25),
+      inset 0 0 40px rgba(0,0,0,0.7);
+  }
+
+  .plate-tag{
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:4;
+    padding:3px 8px;
+    white-space:nowrap;
+    border:1px solid rgba(217,179,112,0.35);
+    background:rgba(0,0,0,0.25);
+    color:rgba(217,179,112,0.75);
+    font-family:"Cormorant SC", serif;
+    font-size:8px;
+    font-weight:500;
+    letter-spacing:0.25em;
+  }
+
+  .counter{
+    position:absolute;
+    top:10px;
+    right:12px;
+    z-index:4;
+    color:rgba(217,179,112,0.8);
+    font-family:"Cormorant SC", serif;
+    font-size:9px;
+    font-weight:500;
+    letter-spacing:0.18em;
+    white-space:nowrap;
+  }
+
+  .counter .cur{color:var(--gold-bright);font-weight:600}
+
+  .plate-caption{
+    position:absolute;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    z-index:4;
+    text-align:center;
+    color:rgba(217,179,112,0.55);
+    font-family:"Cormorant Garamond", serif;
+    font-size:10px;
+    font-weight:400;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+  }
+
+  .plate-slides{
+    position:absolute;
+    inset:20% 12% 22%;
+  }
+
+  .slide{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    overflow:hidden;
+    opacity:0;
+    transform:scale(0.94);
+    transition:opacity .6s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+  }
+
+  .slide.active{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  .slide-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    filter:saturate(0.92) contrast(1.03) brightness(0.88);
+  }
+
+  .slide-overlay{
+    position:absolute;
+    inset:auto 0 0 0;
+    padding:16px 14px 14px;
+    background:linear-gradient(180deg, rgba(15,4,8,0) 0%, rgba(15,4,8,0.72) 48%, rgba(15,4,8,0.9) 100%);
+    text-align:center;
+  }
+
+  .slide-title{
+    color:#f0d8a0;
+    font-family:"Cormorant SC", serif;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.18em;
+    line-height:1.35;
+    text-transform:uppercase;
+  }
+
+  .slide-date{
+    margin-top:6px;
+    color:rgba(217,179,112,0.88);
+    font-family:"Playfair Display", serif;
+    font-size:12px;
+    letter-spacing:0.08em;
+  }
+
+  .dots{
+    position:relative;
+    z-index:3;
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    margin-top:-8px;
+    margin-bottom:8px;
+  }
+
+  .dot-btn{
+    width:6px;
+    height:6px;
+    border:none;
+    border-radius:50%;
+    padding:0;
+    background:rgba(217,179,112,0.28);
+    cursor:pointer;
+    transition:background .2s ease, transform .2s ease;
+  }
+
+  .dot-btn.active{
+    background:var(--gold-bright);
+    transform:scale(1.35);
+  }
+
+  .cta-wrap{
+    position:relative;
+    z-index:3;
+    margin-top:2px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .cta{
+    position:relative;
+    overflow:hidden;
+    min-width:250px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    padding:15px 26px;
+    border:none;
+    border-radius:2px;
+    cursor:pointer;
+    color:var(--ink);
+    background:linear-gradient(180deg, #efc98b 0%, #d9b370 55%, #b4894a 100%);
+    box-shadow:
+      0 4px 18px rgba(0,0,0,0.35),
+      0 0 0 1px rgba(120,60,10,0.15) inset;
+    font-family:"Cormorant SC", serif;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.06em;
+  }
+
+  .cta::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform:translateX(-120%);
+    animation:shine 4.8s ease-in-out infinite;
+  }
+
+  @keyframes shine{
+    0%,65%,100%{transform:translateX(-120%)}
+    78%{transform:translateX(120%)}
+  }
+
+  .cta-icon{
+    position:relative;
+    z-index:1;
+    flex:none;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#3a0d18;
+    color:#efc98b;
+    box-shadow:0 2px 6px rgba(0,0,0,0.25) inset;
+  }
+
+  .cta-icon.playing{background:#5a1426}
+
+  .cta-icon svg{
+    width:12px;
+    height:14px;
+    fill:#efc98b;
+    margin-left:1px;
+  }
+
+  .cta-label{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .cta-label .big{
+    color:#5a1a19;
+    font-family:"Cormorant Garamond", serif;
+    font-size:18px;
+    font-weight:700;
+    line-height:1;
+    letter-spacing:0.02em;
+  }
+
+  .cta-label .sm{
+    margin-top:2px;
+    color:rgba(68,20,24,0.65);
+    font-size:9px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+  }
+
+  .cta-time{
+    margin-top:4px;
+    color:rgba(68,20,24,0.7);
+    font-size:10px;
+    letter-spacing:0.18em;
+  }
+
+  .cta-progress{
+    position:absolute;
+    left:0;
+    bottom:0;
+    z-index:2;
+    width:0%;
+    height:3px;
+    background:rgba(90,20,30,0.45);
+    transition:width .1s linear;
+  }
+
+  .footer{
+    position:relative;
+    z-index:3;
+    margin-top:16px;
+    text-align:center;
+    color:var(--gold);
+    font-family:"Cormorant SC", serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:0.28em;
+  }
+
+  .footer a{
+    color:inherit;
+    text-decoration:none;
+    border-bottom:1px solid rgba(217,179,112,0.4);
+    padding-bottom:2px;
+  }
+
+  .home{
+    position:absolute;
+    bottom:8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:120px;
+    height:4px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.7);
+    z-index:99;
+  }
+
+  @media (max-height:760px){
+    .canvas{padding-top:42px}
+    .title{font-size:38px}
+    .title .line1{font-size:24px}
+    .title .numeral{font-size:32px}
+    .subtitle{font-size:12px}
+    .frame{max-width:250px}
+    .cta{padding:12px 20px}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="island"></div>
+
+    <div class="canvas">
+      <div class="bg-orn">
+        <svg class="top" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <circle cx="100" cy="100" r="72" stroke="#B98A46" stroke-width="1.2"/>
+          <circle cx="100" cy="100" r="44" stroke="#B98A46" stroke-width="0.9"/>
+          <path d="M28 100h144M100 28v144M50 50l100 100M150 50L50 150" stroke="#B98A46" stroke-width="0.7"/>
+        </svg>
+        <svg class="mid" viewBox="0 0 300 300" fill="none" aria-hidden="true">
+          <circle cx="150" cy="150" r="126" stroke="#8F5B31" stroke-width="1.2"/>
+          <circle cx="150" cy="150" r="86" stroke="#8F5B31" stroke-width="1"/>
+          <circle cx="150" cy="150" r="48" stroke="#8F5B31" stroke-width="0.9"/>
+        </svg>
+        <svg class="bot" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <circle cx="100" cy="100" r="72" stroke="#B98A46" stroke-width="1.2"/>
+          <circle cx="100" cy="100" r="44" stroke="#B98A46" stroke-width="0.9"/>
+          <path d="M28 100h144M100 28v144M50 50l100 100M150 50L50 150" stroke="#B98A46" stroke-width="0.7"/>
+        </svg>
+      </div>
+
+      <div class="vignette"></div>
+
+      <div class="flourish">
+        <div class="line"></div>
+        <div class="diamond small"></div>
+        <div class="diamond"></div>
+        <div class="diamond small"></div>
+        <div class="line"></div>
+      </div>
+
+      <div class="title-wrap">
+        <div class="title">
+          <span class="line1">Карета</span>
+          <span class="line2">Екатерины<span class="numeral">II</span></span>
+        </div>
+        <div class="subtitle">Экспонат Национального музея Республики Татарстан · 1767 год</div>
+      </div>
+
+      <div class="gallery">
+        <button class="nav-arrow" id="prev" aria-label="Предыдущее фото">
+          <svg viewBox="0 0 12 12" fill="none"><path d="M8 2L3 6l5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="frame">
+          <svg class="frame-svg" viewBox="0 0 300 400" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="gold" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#F6E0A8"/>
+                <stop offset="0.5" stop-color="#D9B370"/>
+                <stop offset="1" stop-color="#8E6A32"/>
+              </linearGradient>
+            </defs>
+            <g stroke="url(#gold)" fill="none" stroke-linecap="round">
+              <rect x="30" y="40" width="240" height="320" stroke-width="1.2"/>
+              <rect x="34" y="44" width="232" height="312" stroke-width="0.6" opacity="0.7"/>
+              <g transform="translate(30 40)">
+                <path d="M 0 30 C -12 20, -12 6, 0 -2 C 10 6, 18 14, 30 0" stroke-width="1.1"/>
+                <path d="M 0 14 q -8 -8 0 -14 q 8 8 14 0" stroke-width="0.9"/>
+                <circle cx="0" cy="0" r="2" fill="url(#gold)" stroke="none"/>
+              </g>
+              <g transform="translate(270 40) scale(-1 1)">
+                <path d="M 0 30 C -12 20, -12 6, 0 -2 C 10 6, 18 14, 30 0" stroke-width="1.1"/>
+                <path d="M 0 14 q -8 -8 0 -14 q 8 8 14 0" stroke-width="0.9"/>
+                <circle cx="0" cy="0" r="2" fill="url(#gold)" stroke="none"/>
+              </g>
+              <g transform="translate(30 360) scale(1 -1)">
+                <path d="M 0 30 C -12 20, -12 6, 0 -2 C 10 6, 18 14, 30 0" stroke-width="1.1"/>
+                <path d="M 0 14 q -8 -8 0 -14 q 8 8 14 0" stroke-width="0.9"/>
+                <circle cx="0" cy="0" r="2" fill="url(#gold)" stroke="none"/>
+              </g>
+              <g transform="translate(270 360) scale(-1 -1)">
+                <path d="M 0 30 C -12 20, -12 6, 0 -2 C 10 6, 18 14, 30 0" stroke-width="1.1"/>
+                <path d="M 0 14 q -8 -8 0 -14 q 8 8 14 0" stroke-width="0.9"/>
+                <circle cx="0" cy="0" r="2" fill="url(#gold)" stroke="none"/>
+              </g>
+              <g transform="translate(150 40)">
+                <path d="M -30 0 q 30 -26 60 0" stroke-width="1.1"/>
+                <path d="M -22 -4 q 22 -16 44 0" stroke-width="0.7" opacity="0.7"/>
+                <path d="M -10 -12 l 3 -10 l 4 6 l 3 -10 l 3 10 l 4 -6 l 3 10" stroke-width="1"/>
+                <circle cx="0" cy="-24" r="1.4" fill="url(#gold)" stroke="none"/>
+              </g>
+              <g transform="translate(150 360)">
+                <path d="M -30 0 q 14 14 30 0 q 16 -14 30 0" stroke-width="1.1" fill="none"/>
+                <path d="M -20 6 q 10 8 20 0 q 10 -8 20 0" stroke-width="0.7" opacity="0.7"/>
+                <circle cx="0" cy="4" r="2" fill="url(#gold)" stroke="none"/>
+              </g>
+              <g transform="translate(30 200)">
+                <circle r="5" stroke-width="1"/>
+                <path d="M -10 0 h -8 M 10 0 h 8" stroke-width="0.8"/>
+              </g>
+              <g transform="translate(270 200)">
+                <circle r="5" stroke-width="1"/>
+                <path d="M -10 0 h -8 M 10 0 h 8" stroke-width="0.8"/>
+              </g>
+            </g>
+          </svg>
+
+          <div class="frame-inner">
+            <div class="plate-tag">Архив НМРТ</div>
+            <div class="counter"><span class="cur" id="cur">01</span> / <span id="total">03</span></div>
+
+            <div class="plate-slides" id="slides">
+              <figure class="slide active">
+                <img class="slide-image" src="assets/images/carriage-1.jpeg" alt="Карета Екатерины II в экспозиции музея" />
+                <figcaption class="slide-overlay">
+                  <div class="slide-title">Карета в экспозиции</div>
+                  <div class="slide-date">1767</div>
+                </figcaption>
+              </figure>
+
+              <figure class="slide">
+                <img class="slide-image" src="assets/images/carriage-2.jpg" alt="Парадная карета Екатерины II в зале музея" />
+                <figcaption class="slide-overlay">
+                  <div class="slide-title">Общий вид экспоната</div>
+                  <div class="slide-date">Национальный музей РТ</div>
+                </figcaption>
+              </figure>
+
+              <figure class="slide">
+                <img class="slide-image" src="assets/images/carriage-model.jpg" alt="3D-модель кареты Екатерины II" />
+                <figcaption class="slide-overlay">
+                  <div class="slide-title">3D-модель кареты</div>
+                  <div class="slide-date">Сувенирный макет</div>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="plate-caption">из фондов музея</div>
+          </div>
+        </div>
+
+        <button class="nav-arrow" id="next" aria-label="Следующее фото">
+          <svg viewBox="0 0 12 12" fill="none"><path d="M4 2l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="dots" id="dots"></div>
+
+      <div class="cta-wrap">
+        <button class="cta" id="cta" aria-label="Слушать историю">
+          <div class="cta-icon" id="ctaIcon">
+            <svg id="playSvg" viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1v12l11-6z"/></svg>
+          </div>
+          <div class="cta-label">
+            <span class="big">Слушать историю</span>
+            <span class="sm">голосом Екатерины II</span>
+            <span class="cta-time" id="ctaTime">00:00 / 00:00</span>
+          </div>
+          <div class="cta-progress" id="ctaProgress"></div>
+        </button>
+        <audio id="storyAudio" preload="metadata">
+          <source src="assets/audio/katenka.ogg" type="audio/ogg" />
+        </audio>
+      </div>
+
+      <div class="footer">
+        <a href="https://tatmuseum.ru/" target="_blank" rel="noreferrer">tatmuseum.ru</a>
+      </div>
+    </div>
+
+    <div class="home"></div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var dotsWrap = document.getElementById('dots');
+    var cur = document.getElementById('cur');
+    var total = document.getElementById('total');
+    var prev = document.getElementById('prev');
+    var next = document.getElementById('next');
+    var i = 0;
+
+    slides.forEach(function(_, index){
+      var btn = document.createElement('button');
+      btn.className = 'dot-btn' + (index === 0 ? ' active' : '');
+      btn.setAttribute('aria-label', 'Фото ' + (index + 1));
+      btn.addEventListener('click', function(){ go(index); });
+      dotsWrap.appendChild(btn);
+    });
+
+    var dots = Array.prototype.slice.call(document.querySelectorAll('.dot-btn'));
+    total.textContent = String(slides.length).padStart(2, '0');
+
+    function go(n){
+      i = (n + slides.length) % slides.length;
+      slides.forEach(function(slide, index){
+        slide.classList.toggle('active', index === i);
+      });
+      dots.forEach(function(dot, index){
+        dot.classList.toggle('active', index === i);
+      });
+      cur.textContent = String(i + 1).padStart(2, '0');
+    }
+
+    prev.addEventListener('click', function(){ go(i - 1); });
+    next.addEventListener('click', function(){ go(i + 1); });
+
+    var sx = 0;
+    var sy = 0;
+    var frame = document.querySelector('.frame');
+    frame.addEventListener('touchstart', function(e){
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    }, { passive: true });
+    frame.addEventListener('touchend', function(e){
+      var dx = e.changedTouches[0].clientX - sx;
+      var dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        go(i + (dx < 0 ? 1 : -1));
+      }
+    });
+  })();
+
+  (function(){
+    var btn = document.getElementById('cta');
+    var audio = document.getElementById('storyAudio');
+    var iconWrap = document.getElementById('ctaIcon');
+    var playSvg = document.getElementById('playSvg');
+    var progress = document.getElementById('ctaProgress');
+    var timeEl = document.getElementById('ctaTime');
+
+    function fmt(s){
+      if (!isFinite(s) || s < 0) {
+        s = 0;
+      }
+      var m = Math.floor(s / 60);
+      var r = Math.floor(s % 60);
+      return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r;
+    }
+
+    function setPlayingState(isPlaying){
+      if (isPlaying) {
+        playSvg.innerHTML = '<rect x="1" y="1" width="3" height="12" rx="0.5"></rect><rect x="8" y="1" width="3" height="12" rx="0.5"></rect>';
+        iconWrap.classList.add('playing');
+      } else {
+        playSvg.innerHTML = '<path d="M1 1v12l11-6z"></path>';
+        iconWrap.classList.remove('playing');
+      }
+    }
+
+    function renderTime(){
+      var current = audio.currentTime || 0;
+      var duration = audio.duration || 0;
+      timeEl.textContent = fmt(current) + ' / ' + fmt(duration);
+      progress.style.width = duration ? ((current / duration) * 100) + '%' : '0%';
+    }
+
+    btn.addEventListener('click', function(){
+      if (audio.paused) {
+        audio.play().catch(function(){});
+      } else {
+        audio.pause();
+      }
+    });
+
+    audio.addEventListener('loadedmetadata', renderTime);
+    audio.addEventListener('timeupdate', renderTime);
+    audio.addEventListener('play', function(){ setPlayingState(true); });
+    audio.addEventListener('pause', function(){ setPlayingState(false); });
+    audio.addEventListener('ended', function(){
+      setPlayingState(false);
+      renderTime();
+    });
+    audio.addEventListener('error', function(){
+      timeEl.textContent = 'Аудио недоступно';
+      progress.style.width = '0%';
+      setPlayingState(false);
+    });
+
+    renderTime();
+  })();
+</script>
+
+</body>
+</html>
